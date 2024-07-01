@@ -1,13 +1,15 @@
-server:
-  port: 8000
-  servlet:
-    session:
-      cookie:
-        name: OAUTH2SESSION
 
 spring:
   application:
     name: uaa-server
+  cloud:
+    nacos:
+      discovery:
+        namespace: ${spring.cloud.nacos.config.namespace}
+      config:
+        shared-configs[0]:
+          data-id: uaa-server.yml
+          refresh: true
 
 encrypt:
   key-store:

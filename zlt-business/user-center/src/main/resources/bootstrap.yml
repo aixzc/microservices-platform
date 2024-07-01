@@ -1,11 +1,11 @@
-server:
-  port: 7000
-
 spring:
   application:
     name: user-center
-#  cloud:
-#    nacos:
-#      discovery:
-#        metadata:
-#          version: zlt
+  cloud:
+    nacos:
+      discovery:
+        namespace: ${spring.cloud.nacos.config.namespace}
+      config:
+        shared-configs[0]:
+          data-id: user-center.yml
+          refresh: true

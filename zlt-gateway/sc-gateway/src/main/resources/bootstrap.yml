@@ -1,8 +1,13 @@
-server:
-  port: 9900
-
 spring:
   application:
     name: sc-gateway
   main:
     web-application-type: reactive
+  cloud:
+    nacos:
+      discovery:
+        namespace: ${spring.cloud.nacos.config.namespace}
+      config:
+        shared-configs[0]:
+          data-id: sc-gateway.yml
+          refresh: true

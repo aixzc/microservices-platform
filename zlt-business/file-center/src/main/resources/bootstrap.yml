@@ -4,3 +4,11 @@ server:
 spring:
   application:
     name: file-center
+  cloud:
+    nacos:
+      discovery:
+        namespace: ${spring.cloud.nacos.config.namespace}
+      config:
+        shared-configs[0]:
+          data-id: file-center.yml
+          refresh: true
