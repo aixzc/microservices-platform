@@ -17,6 +17,12 @@
             <if test="f.searchKey != null and f.searchKey != ''">
                 and t.name like concat('%', #{f.searchKey}, '%')
             </if>
+			<if test="f.id != null">
+				and t.id = #{f.id}
+			</if>
+			<if test="f.url != null and f.url != ''">
+				and t.url like concat('%', #{f.url}, '%')
+			</if>
 		</where>
 	</sql>
 

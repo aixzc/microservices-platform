@@ -53,6 +53,24 @@ public class S3Service extends AbstractIFileService {
         }
     }
 
+    @Override
+    protected String viewUrl(String id, String path) {
+
+        S3Object s3Object = null;
+        String url = "";
+        if (StrUtil.isNotBlank(path)) {
+            s3Object = parsePath(path);
+        } else {
+            FileInfo fileInfo = baseMapper.selectById(id);
+            if (fileInfo != null) {
+                s3Object = parsePath(fileInfo.getPath());
+            }
+        }
+        assert s3Object != null;
+        url = s3Template.getViewUrl(s3Object.bucketName, s3Object.objectName, 60);
+        return url;
+    }
+
     @Setter
     @Getter
     private class S3Object {

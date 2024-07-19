@@ -22,4 +22,6 @@ public interface IFileService extends IService<FileInfo> {
 	void delete(String id);
 
 	void out(String id, OutputStream os);
+
+	String getUrl(String id, String path);
 }

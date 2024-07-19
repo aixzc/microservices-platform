@@ -3,6 +3,7 @@ package com.central.file.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.central.oss.model.ObjectInfo;
@@ -82,6 +83,20 @@ public abstract class AbstractIFileService extends ServiceImpl<FileMapper, FileI
     public PageResult<FileInfo> findList(Map<String, Object> params) {
         Page<FileInfo> page = new Page<>(MapUtils.getInteger(params, "page"), MapUtils.getInteger(params, "limit"));
         List<FileInfo> list = baseMapper.findList(page, params);
+        assert CollUtil.isNotEmpty(list);
+        list.forEach(fileInfo -> fileInfo.setPath(getUrl(null, fileInfo.getPath())));
         return PageResult.<FileInfo>builder().data(list).code(0).count(page.getTotal()).build();
+    }
+
+    /**
+     * 查看url
+     *
+     * @param id
+     */
+    protected abstract String viewUrl(String id, String path);
+
+    @Override
+    public String getUrl(String id, String path) {
+        return this.viewUrl(id, path);
     }
 }

@@ -41,4 +41,9 @@ public class FastdfsService extends AbstractIFileService {
     @Override
     public void out(String id, OutputStream os) {
     }
+
+    @Override
+    public String viewUrl(String id, String path) {
+        return "";
+    }
 }

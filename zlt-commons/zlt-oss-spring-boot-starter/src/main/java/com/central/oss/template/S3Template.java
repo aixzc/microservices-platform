@@ -99,7 +99,8 @@ public class S3Template implements InitializingBean {
 
         ObjectInfo obj = new ObjectInfo();
         obj.setObjectPath(bucketName + PATH_SPLIT + objectName);
-        obj.setObjectUrl(fileProperties.getS3().getEndpoint() + PATH_SPLIT + obj.getObjectPath());
+//        obj.setObjectUrl(fileProperties.getS3().getEndpoint() + PATH_SPLIT + obj.getObjectPath());
+        obj.setObjectUrl(obj.getObjectPath());
         return obj;
     }
 

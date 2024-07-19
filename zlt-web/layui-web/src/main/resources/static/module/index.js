@@ -192,9 +192,14 @@ layui.define(['config', 'admin', 'layer', 'laytpl', 'element', 'form'], function
                 layer.closeAll('loading');
                 if (data && data.resp_code === 0) {
                     let user = data.datas;
-                    config.putUser(user);
-                    admin.putTempData("permissions",user.permissions);
-                    success(user);
+                    admin.req('api-file/url', JSON.stringify({"path":user.headImgUrl}), function (data) {
+                        if (data && data.resp_code === 0) {
+                            user.headImgUrl = data.datas;
+                        }
+                        config.putUser(user);
+                        admin.putTempData("permissions",user.permissions);
+                        success(user);
+                    }, 'POST');
                 } else {
                     layer.msg('获取用户失败', {icon: 2});
                     config.removeToken();

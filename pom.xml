@@ -60,6 +60,7 @@
         <tomcat-embed-core.version>10.1.11</tomcat-embed-core.version>
         <httpclient.version>5.2.1</httpclient.version>
         <oauth2-oidc-sdk.version>11.7</oauth2-oidc-sdk.version>
+        <alibabacloud-ocr_api20210707.version>3.0.1</alibabacloud-ocr_api20210707.version>
     </properties>
 
     <dependencies>
@@ -392,6 +393,11 @@
                 <artifactId>oauth2-oidc-sdk</artifactId>
                 <version>${oauth2-oidc-sdk.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>alibabacloud-ocr_api20210707</artifactId>
+                <version>${alibabacloud-ocr_api20210707.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -472,6 +478,7 @@
         <module>zlt-config</module>
         <!-- demo -->
         <module>zlt-demo</module>
+        <module>zc-work</module>
     </modules>
 
     <licenses>

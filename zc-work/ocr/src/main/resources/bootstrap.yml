@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: ocr
+  cloud:
+    nacos:
+      discovery:
+        namespace: ${spring.cloud.nacos.config.namespace}
+      config:
+        shared-configs[0]:
+          data-id: ocr.yml
+          refresh: true

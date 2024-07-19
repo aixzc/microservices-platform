@@ -14,7 +14,7 @@ spring:
       rocketmq:
         binder:
           # RocketMQ 服务地址
-          name-server: 192.168.28.130:9876
+          name-server: ${zlt.rocket-mq.host}:${zlt.rocket-mq.port}
 
 logging:
   level:

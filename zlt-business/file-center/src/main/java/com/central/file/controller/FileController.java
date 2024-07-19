@@ -2,14 +2,10 @@ package com.central.file.controller;
 
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
 import com.central.common.model.Result;
 import com.central.file.service.IFileService;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.central.common.model.PageResult;
@@ -64,5 +60,16 @@ public class FileController {
     @GetMapping("/files")
     public PageResult<FileInfo> findFiles(@RequestParam Map<String, Object> params) {
         return fileService.findList(params);
+    }
+
+    /**
+     * 查询有效url
+     *
+     * @param json
+     * @return
+     */
+    @PostMapping("/url")
+    public Result<String> viewUrl(@RequestBody String json) {
+        return Result.succeed(fileService.getUrl(null, JSONObject.parseObject(json).getString("path")), "获取成功");
     }
 }
