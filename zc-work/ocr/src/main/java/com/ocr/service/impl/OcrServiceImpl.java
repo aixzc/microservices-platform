@@ -10,6 +10,7 @@ import com.ocr.properties.OcrProperties;
 import com.ocr.service.IOcrService;
 import darabonba.core.client.ClientOverrideConfiguration;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,24 +19,30 @@ import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
-public class OcrServiceImpl implements IOcrService {
+public class OcrServiceImpl implements IOcrService, InitializingBean {
 
     @Resource
     private OcrProperties ocrProperties;
 
+    private AsyncClient client;
+
     @Override
-    public String loadByImgUrl(String imgUrl) throws ExecutionException, InterruptedException {
+    public void afterPropertiesSet() throws Exception {
         StaticCredentialProvider provider = StaticCredentialProvider.create(Credential.builder()
                 .accessKeyId(ocrProperties.getAccessKeyId())
                 .accessKeySecret(ocrProperties.getAccessKeySecret())
                 .build());
-        AsyncClient client = AsyncClient.builder()
+        client = AsyncClient.builder()
                 .credentialsProvider(provider)
                 .overrideConfiguration(
                         ClientOverrideConfiguration.create()
                                 .setEndpointOverride(ocrProperties.getEndpoint())
-                )
-                .build();
+                ).build();
+    }
+
+    @Override
+    public String loadByImgUrl(String imgUrl) throws ExecutionException, InterruptedException {
+
         RecognizeHandwritingRequest recognizeHandwritingRequest = RecognizeHandwritingRequest.builder().url(imgUrl).needRotate(false)
                 .build();
         CompletableFuture<RecognizeHandwritingResponse> response = client.recognizeHandwriting(recognizeHandwritingRequest);
@@ -44,4 +51,5 @@ public class OcrServiceImpl implements IOcrService {
         client.close();
         return new Gson().toJson(resp);
     }
+
 }

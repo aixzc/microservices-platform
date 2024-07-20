@@ -22,8 +22,8 @@ public class OcrController {
     private IOcrService ocrService;
 
     @GetMapping
-    @Operation(summary = "应用列表")
-    public Result<String> list(String imgUrl) throws ExecutionException, InterruptedException {
+    @Operation(summary = "根据图片url获取图片信息")
+    public Result<String> loadByImgUrl(String imgUrl) throws ExecutionException, InterruptedException {
         return Result.succeed(ocrService.loadByImgUrl(imgUrl));
     }
 }
