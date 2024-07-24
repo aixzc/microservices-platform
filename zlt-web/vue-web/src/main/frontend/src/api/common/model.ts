@@ -18,9 +18,5 @@ export default {
     },
     'file': {
         name: 'api-file/'
-    },
-    '/api-uaa/': {
-        target: 'http://127.0.0.1:9900',
-        changeOrigin: true,
     }
 };

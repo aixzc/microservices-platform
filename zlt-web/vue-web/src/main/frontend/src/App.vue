@@ -4,7 +4,7 @@
 		<LockScreen v-if="themeConfig.isLockScreen" />
 		<Setings ref="setingsRef" v-show="setLockScreen" />
 		<CloseFull v-if="!themeConfig.isLockScreen" />
-		<Upgrade v-if="getVersion" />
+<!--		<Upgrade v-if="getVersion" />-->
 	</el-config-provider>
 </template>
 
@@ -40,14 +40,14 @@ const setLockScreen = computed(() => {
 	return themeConfig.value.isLockScreen ? themeConfig.value.lockScreenTime > 1 : themeConfig.value.lockScreenTime >= 0;
 });
 // 获取版本号
-const getVersion = computed(() => {
-	let isVersion = false;
-	if (route.path !== '/login') {
-		// @ts-ignore
-		if ((Local.get('version') && Local.get('version') !== __NEXT_VERSION__) || !Local.get('version')) isVersion = true;
-	}
-	return isVersion;
-});
+// const getVersion = computed(() => {
+// 	let isVersion = false;
+// 	if (route.path !== '/login') {
+// 		// @ts-ignore
+// 		if ((Local.get('version') && Local.get('version') !== __NEXT_VERSION__) || !Local.get('version')) isVersion = true;
+// 	}
+// 	return isVersion;
+// });
 // 获取全局组件大小
 const getGlobalComponentSize = computed(() => {
 	return other.globalComponentSize();
