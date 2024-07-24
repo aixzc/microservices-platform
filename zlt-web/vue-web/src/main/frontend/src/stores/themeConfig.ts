@@ -132,7 +132,6 @@ export const useThemeConfig = defineStore('themeConfig', {
 			 */
 			// 是否开启后端控制路由
 			isRequestRoutes: true,
-
 			/**
 			 * 全局网站标题 / 副标题
 			 */
@@ -146,6 +145,7 @@ export const useThemeConfig = defineStore('themeConfig', {
 			globalI18n: 'zh-cn',
 			// 默认全局组件大小，可选值"<large|'default'|small>"，默认 'large'
 			globalComponentSize: 'large',
+			systemClientId: 'webApp'
 		},
 	}),
 	actions: {

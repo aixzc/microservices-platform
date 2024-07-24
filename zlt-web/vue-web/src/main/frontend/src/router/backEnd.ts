@@ -49,7 +49,6 @@ export async function initBackEndControlRoutes() {
     if (res.length <= 0) return Promise.resolve(true);
     //菜单数据转换
     const menuData = rebuildRouteData(res);
-    console.log("menuData", menuData);
     // 存储接口原始路由（未处理component），根据需求选择使用
     useRequestOldRoutes().setRequestOldRoutes(JSON.parse(JSON.stringify(menuData)));
     // 处理路由（component），替换 dynamicRoutes（/@/router/route）第一个顶级 children 的路由

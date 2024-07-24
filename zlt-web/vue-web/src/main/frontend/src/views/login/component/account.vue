@@ -115,6 +115,8 @@ const onSignIn = async () => {
   });
   // 存储 token 到浏览器缓存
   Session.set('token', res.access_token);
+  // 存储 当前系统id
+  Session.set('system', themeConfig.value.systemClientId);
   // 模拟数据，对接接口时，记得删除多余代码及对应依赖的引入。用于 `/src/stores/userInfo.ts` 中不同用户登录判断（模拟数据）
   Cookies.set('userName', state.ruleForm.username);
   if (!themeConfig.value.isRequestRoutes) {

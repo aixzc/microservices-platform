@@ -88,6 +88,7 @@ export default {
 		title4: 'news',
 		title5: 'Full screen on',
 		title6: 'Full screen off',
+		title7: 'System',
 		dropdownLarge: 'large',
 		dropdownDefault: 'default',
 		dropdownSmall: 'small',

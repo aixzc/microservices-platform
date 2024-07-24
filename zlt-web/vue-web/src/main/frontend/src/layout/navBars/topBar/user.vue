@@ -1,5 +1,17 @@
 <template>
   <div class="layout-navbars-breadcrumb-user pr15" :style="{ flex: layoutUserFlexNum }">
+    <el-dropdown :show-timeout="70" :hide-timeout="50" trigger="click" @command="onSystemChange">
+      <div class="layout-navbars-breadcrumb-user-icon">
+        <i class="iconfont icon-shuju" :title="$t('message.user.title7')"></i>
+      </div>
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-dropdown-item v-for="(v, k) in client.data" :command="v" :disabled="client.currentSystem === v.clientId">
+            {{ v.clientName }}
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </template>
+    </el-dropdown>
     <el-dropdown :show-timeout="70" :hide-timeout="50" trigger="click" @command="onComponentSizeChange">
       <div class="layout-navbars-breadcrumb-user-icon">
         <i class="iconfont icon-ziti" :title="$t('message.user.title0')"></i>
@@ -89,9 +101,9 @@
 </template>
 
 <script setup lang="ts" name="layoutBreadcrumbUser">
-import {defineAsyncComponent, ref, unref, computed, reactive, onMounted} from 'vue';
+import {computed, defineAsyncComponent, onMounted, reactive, ref, unref} from 'vue';
 import {useRouter} from 'vue-router';
-import {ElMessageBox, ElMessage, ClickOutside as vClickOutside} from 'element-plus';
+import {ClickOutside as vClickOutside, ElMessage, ElMessageBox} from 'element-plus';
 import screenfull from 'screenfull';
 import {useI18n} from 'vue-i18n';
 import {storeToRefs} from 'pinia';
@@ -99,8 +111,9 @@ import {useUserInfo} from '/@/stores/userInfo';
 import {useThemeConfig} from '/@/stores/themeConfig';
 import other from '/@/utils/other';
 import mittBus from '/@/utils/mitt';
-import {Session, Local} from '/@/utils/storage';
+import {Local, Session} from '/@/utils/storage';
 import {useLoginApi} from "/@/api/system/login";
+import {useClientApi} from "/@/api/system/client";
 
 // 引入组件
 const UserNews = defineAsyncComponent(() => import('/@/layout/navBars/topBar/userNews.vue'));
@@ -120,6 +133,12 @@ const state = reactive({
   isScreenfull: false,
   disabledI18n: 'zh-cn',
   disabledSize: 'large',
+});
+const clientApi = useClientApi();
+//系统列表
+const client = reactive({
+  data: [],
+  currentSystem: Session.get('system')
 });
 
 // 设置分割样式
@@ -221,12 +240,20 @@ const onLanguageChange = (lang: string) => {
 const initI18nOrSize = (value: string, attr: string) => {
   (<any>state)[attr] = Local.get('themeConfig')[value];
 };
+const getAllClient = async () => {
+  client.data = await clientApi.getAll();
+}
+const onSystemChange = async (system: object) => {
+
+}
 // 页面加载时
 onMounted(() => {
   if (Local.get('themeConfig')) {
     initI18nOrSize('globalComponentSize', 'disabledSize');
     initI18nOrSize('globalI18n', 'disabledI18n');
   }
+  //初始化系统下拉
+  getAllClient();
 });
 </script>
 

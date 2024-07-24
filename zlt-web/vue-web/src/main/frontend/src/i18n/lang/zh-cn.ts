@@ -88,6 +88,7 @@ export default {
 		title4: '消息',
 		title5: '开全屏',
 		title6: '关全屏',
+		title7: '系统',
 		dropdownLarge: '大型',
 		dropdownDefault: '默认',
 		dropdownSmall: '小型',
