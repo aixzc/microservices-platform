@@ -128,7 +128,7 @@ layui.define(['config', 'layer'], function (exports) {
                     if (jsonRs.code == 401) {
                         config.removeToken();
                         layer.msg('登录过期', {icon: 2, time: 1500}, function () {
-                            location.replace('/login.html');
+                            // location.replace('/login.html');
                         }, 1000);
                         return;
                     } else if (jsonRs.code == 403) {

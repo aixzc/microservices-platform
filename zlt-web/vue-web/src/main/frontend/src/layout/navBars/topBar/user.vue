@@ -102,7 +102,7 @@
 
 <script setup lang="ts" name="layoutBreadcrumbUser">
 import {computed, defineAsyncComponent, onMounted, reactive, ref, unref} from 'vue';
-import {useRouter} from 'vue-router';
+import {useRoute, useRouter} from 'vue-router';
 import {ClickOutside as vClickOutside, ElMessage, ElMessageBox} from 'element-plus';
 import screenfull from 'screenfull';
 import {useI18n} from 'vue-i18n';
@@ -114,6 +114,7 @@ import mittBus from '/@/utils/mitt';
 import {Local, Session} from '/@/utils/storage';
 import {useLoginApi} from "/@/api/system/login";
 import {useClientApi} from "/@/api/system/client";
+import {signIn} from "/@/views/login/ts/account";
 
 // 引入组件
 const UserNews = defineAsyncComponent(() => import('/@/layout/navBars/topBar/userNews.vue'));
@@ -124,6 +125,7 @@ const userNewsRef = ref();
 const userNewsBadgeRef = ref();
 const {locale, t} = useI18n();
 const router = useRouter();
+const route = useRoute();
 const stores = useUserInfo();
 const storesThemeConfig = useThemeConfig();
 const {userInfos} = storeToRefs(stores);
@@ -198,12 +200,9 @@ const onHandleCommandClick = async (path: string) => {
       },
     })
         .then(async () => {
-          const checkTokenRes = await useLoginApi().checkToken({token: Session.get("token")});
-          if (checkTokenRes.active) {
-            let loginPageUrl = window.location.protocol + '//' + window.location.host;
-            //移除后端token
-            await useLoginApi().removeToken({redirect_uri: loginPageUrl, access_token: Session.get("token")});
-          }
+          let loginPageUrl = window.location.protocol + '//' + window.location.host;
+          //移除后端token
+          await useLoginApi().removeToken({redirect_uri: loginPageUrl, access_token: Session.get("token")});
           // 清除缓存/token等
           Session.clear();
           // 使用 reload 时，不需要调用 resetRoute() 重置路由
@@ -244,8 +243,33 @@ const getAllClient = async () => {
   client.data = await clientApi.getAll();
 }
 const onSystemChange = async (system: object) => {
-
+  let loginPageUrl = window.location.protocol + '//' + window.location.host;
+  //移除后端token
+  await useLoginApi().removeToken({redirect_uri: loginPageUrl, access_token: Session.get("token")});
+  const isNoPower = await signIn({grant_type: 'openId', openId: userInfos.value.user.openId}, {
+    clientId: system.clientId,
+    clientSecret: system.clientSecretStr
+  });
+  signInSuccess(isNoPower);
 }
+//切换系统后的跳转
+const signInSuccess = (isNoPower: boolean | undefined) => {
+  if (isNoPower) {
+    ElMessage.warning('抱歉，您没有权限');
+    Session.clear();
+  } else {
+    // 如果是复制粘贴的路径，非首页/登录页，那么登录成功后重定向到对应的路径中
+    if (route.query?.redirect) {
+      router.push({
+        path: <string>route.query?.redirect,
+        query: Object.keys(<string>route.query?.params).length > 0 ? JSON.parse(<string>route.query?.params) : '',
+      });
+    } else {
+      router.push('/');
+    }
+    client.currentSystem = Session.get('system');
+  }
+};
 // 页面加载时
 onMounted(() => {
   if (Local.get('themeConfig')) {

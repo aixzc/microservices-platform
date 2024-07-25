@@ -10,6 +10,7 @@ import {useFileApi} from '/@/api/system/file';
 export const useUserInfo = defineStore('userInfo', {
     state: (): UserInfosState => ({
         userInfos: {
+            user: {},
             userName: '',
             photo: '',
             time: 0,
@@ -34,7 +35,6 @@ export const useUserInfo = defineStore('userInfo', {
                 setTimeout(async () => {
                     // 用户信息
                     const data = await useUserApi().getCurrentUser();
-                    console.log("userdata", data);
                     const userInfos = {
                         user: data,
                         photo: await useFileApi().getUrl({path: data.headImgUrl}),

@@ -229,7 +229,7 @@ layui.define(['config', 'admin', 'layer', 'laytpl', 'element', 'form'], function
                             admin.req('api-uaa/oauth/check_token?token='+accessToken, {}, function (data) {
                                 if (data.active) {
                                     let loginPageUrl = window.location.protocol + '//' + window.location.host + '/login.html';
-                                    window.location = config.base_server + 'api-uaa/oauth/remove/token?redirect_uri='+loginPageUrl+'&access_token='+accessToken;
+                                    // window.location = config.base_server + 'api-uaa/oauth/remove/token?redirect_uri='+loginPageUrl+'&access_token='+accessToken;
                                 } else {
                                     location.replace('login.html');
                                 }

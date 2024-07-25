@@ -1,6 +1,11 @@
 import request from '/@/utils/request';
 import model from '/@/api/common/model';
 
+export interface clientObj {
+    clientId: string;
+    clientSecret: string;
+}
+
 /**
  * （不建议写成 request.post(xxx)，因为这样 post 时，无法 params 与 data 同时传参）
  *
@@ -11,12 +16,15 @@ import model from '/@/api/common/model';
  */
 export function useLoginApi() {
     return {
-        signIn: (data: object) => {
+        signIn: (data: object, client: clientObj | undefined) => {
+            console.log('client', client)
+            const authorization = client != undefined ? window.btoa(client.clientId + ":" + client.clientSecret) : 'd2ViQXBwOndlYkFwcA==';
+           console.log('authorization', authorization)
             return request({
                 url: model.uaa.name + 'oauth/token',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization': 'Basic d2ViQXBwOndlYkFwcA=='
+                    'Authorization': 'Basic ' + authorization
                 },
                 method: 'post',
                 data,
