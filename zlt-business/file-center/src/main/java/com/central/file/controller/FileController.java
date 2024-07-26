@@ -2,6 +2,7 @@ package com.central.file.controller;
 
 import java.util.Map;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.central.common.model.Result;
 import com.central.file.service.IFileService;
@@ -70,6 +71,8 @@ public class FileController {
      */
     @PostMapping("/url")
     public Result<String> viewUrl(@RequestBody String json) {
-        return Result.succeed(fileService.getUrl(null, JSONObject.parseObject(json).getString("path")), "获取成功");
+        String path = fileService.getUrl(null, JSONObject.parseObject(json).getString("path"));
+        assert StrUtil.isNotBlank(path);
+        return Result.succeed(path, "获取成功");
     }
 }

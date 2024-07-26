@@ -1,6 +1,6 @@
 <template>
-  <el-form size="large" class="login-content-form">
-    <el-form-item class="login-animation1">
+  <el-form size="large" :model="state.ruleForm" :rules="state.rules" class="login-content-form" ref="loginRef">
+    <el-form-item class="login-animation1" prop="username">
       <el-input text :placeholder="$t('message.account.accountPlaceholder1')" v-model="state.ruleForm.username"
                 clearable autocomplete="off">
         <template #prefix>
@@ -10,7 +10,7 @@
         </template>
       </el-input>
     </el-form-item>
-    <el-form-item class="login-animation2">
+    <el-form-item class="login-animation2" prop="password">
       <el-input
           :type="state.isShowPassword ? 'text' : 'password'"
           :placeholder="$t('message.account.accountPlaceholder2')"
@@ -32,7 +32,21 @@
         </template>
       </el-input>
     </el-form-item>
-    <el-form-item class="login-animation3">
+    <el-form-item class="login-animation3" prop="clientId">
+      <el-select
+          :placeholder="$t('message.account.accountPlaceholder4')"
+          v-model="state.ruleForm.clientId"
+          autocomplete="off"
+      >
+        <template #prefix>
+          <el-icon class="el-input__icon">
+            <ele-Briefcase/>
+          </el-icon>
+        </template>
+        <el-option v-for="system in state.clients" :key="system.clientId" :label="system.clientName" :value="system.clientId"/>
+      </el-select>
+    </el-form-item>
+    <el-form-item class="login-animation4" prop="validCode">
       <el-col :span="15">
         <el-input
             text
@@ -50,12 +64,12 @@
         </el-input>
       </el-col>
       <el-col :span="1"></el-col>
-      <el-col :span="8">
-        <img class="login-content-code" :src="state.checkCodeUrl"/>
+      <el-col :span="8" >
+        <img class="login-content-code" :src="state.checkCodeUrl" @click="genCode"/>
       </el-col>
     </el-form-item>
     <el-form-item class="login-animation4">
-      <el-button type="primary" class="login-content-submit" round v-waves @click="onSignIn"
+      <el-button type="primary" class="login-content-submit" round v-waves @click="onSignIn(loginRef)"
                  :loading="state.loading.signIn">
         <span>{{ $t('message.account.accountBtnText') }}</span>
       </el-button>
@@ -64,22 +78,20 @@
 </template>
 
 <script setup lang="ts" name="loginAccount">
-import {reactive, computed, onMounted} from 'vue';
+import {computed, onMounted, reactive, ref} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
-import {ElMessage} from 'element-plus';
+import type {FormInstance} from 'element-plus';
 import {useI18n} from 'vue-i18n';
-import Cookies from 'js-cookie';
 import {storeToRefs} from 'pinia';
 import {useThemeConfig} from '/@/stores/themeConfig';
-import {initFrontEndControlRoutes} from '/@/router/frontEnd';
-import {initBackEndControlRoutes} from '/@/router/backEnd';
-import {Session} from '/@/utils/storage';
 import {formatAxis} from '/@/utils/formatTime';
-import {NextLoading} from '/@/utils/loading';
-import {useLoginApi} from '/@/api/system/login/index';
+import {useClientApi} from '/@/api/system/client';
 import {v4 as uuidv4} from 'uuid';
 import model from '/@/api/common/model';
 import {signIn} from '/@/views/login/ts/account';
+import {NextLoading} from "/@/utils/loading";
+import {Session} from "/@/utils/storage";
+import {ElMessage} from 'element-plus';
 
 // 定义变量内容
 const {t} = useI18n();
@@ -87,18 +99,27 @@ const storesThemeConfig = useThemeConfig();
 const {themeConfig} = storeToRefs(storesThemeConfig);
 const route = useRoute();
 const router = useRouter();
-const loginApi = useLoginApi();
 const baseIp = import.meta.env.VITE_API_URL;
+const clientApi = useClientApi();
+const loginRef = ref<FormInstance>();
 const state = reactive({
   isShowPassword: false,
   checkCodeUrl: '',
   ruleForm: {
-    username: 'admin',
-    password: 'admin',
+    username: '',
+    password: '123456',
     validCode: '',
     grant_type: 'password_code',
-    deviceId: ''
+    deviceId: '',
+    clientId: ''
   },
+  rules: {
+    username: {required: true, message: '用户名不可为空', trigger: 'blur'},
+    password: {required: true, message: '密码不可为空', trigger: 'blur'},
+    validCode: {required: true, message: '请输入验证码', trigger: 'blur'},
+    clientId: {required: true, message: '请选择需要登陆的系统', trigger: 'change'},
+  },
+  clients: [],
   loading: {
     signIn: false,
   },
@@ -109,16 +130,29 @@ const currentTime = computed(() => {
   return formatAxis(new Date());
 });
 // 登录
-const onSignIn = async () => {
-  state.loading.signIn = true;
-  const isNoPower = await signIn(state.ruleForm, undefined);
-  signInSuccess(isNoPower);
+const onSignIn = (formEl: FormInstance | undefined) => {
+  if (!formEl) return;
+  formEl.validate(async (valid: boolean) => {
+    if (valid) {
+      state.loading.signIn = true;
+      const clientMap = state.clients.reduce((map, obj) => {
+        map.set(obj.clientId, {clientId: obj.clientId, clientSecret: obj.clientSecretStr});
+        return map;
+      }, new Map<string, object>());
+      const isNoPower = await signIn(state.ruleForm, clientMap.get(state.ruleForm.clientId)).finally(() => {
+        state.loading.signIn = false;
+        genCode();
+      });
+      signInSuccess(isNoPower);
+    } else {
+      return false;
+    }
+  });
 };
-// 登录成功后的跳转
+// 登录成功后的跳转ElMessage
 const signInSuccess = (isNoPower: boolean | undefined) => {
-  if (isNoPower) {
+  if (isNoPower || isNoPower == undefined) {
     ElMessage.warning('抱歉，您没有登录权限');
-    Session.clear();
   } else {
     // 初始化登录成功时间问候语
     let currentTimeInfo = currentTime.value;
@@ -140,12 +174,22 @@ const signInSuccess = (isNoPower: boolean | undefined) => {
   }
   state.loading.signIn = false;
 };
+const getAllClient = async () => {
+  state.clients = await clientApi.getAll();
+}
 
-onMounted(() => {
+//生成验证码
+const genCode = () => {
   const uuid = uuidv4();
   state.checkCodeUrl = baseIp + model.uaa.name + `validata/code/${uuid}`;
   state.ruleForm.deviceId = uuid;
+}
+
+onMounted(() => {
+  genCode();
+  getAllClient();
 });
+
 
 </script>
 

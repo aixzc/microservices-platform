@@ -9,9 +9,10 @@ export default {
 		two4: '友情链接',
 	},
 	account: {
-		accountPlaceholder1: '用户名 admin 或不输均为 common',
-		accountPlaceholder2: '密码：123456',
-		accountPlaceholder3: '请输入验证码',
+		accountPlaceholder1: '用户名',
+		accountPlaceholder2: '密码',
+		accountPlaceholder3: '验证码',
+		accountPlaceholder4: '系统',
 		accountBtnText: '登 录',
 	},
 	mobile: {

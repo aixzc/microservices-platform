@@ -245,7 +245,7 @@ const getAllClient = async () => {
 const onSystemChange = async (system: object) => {
   let loginPageUrl = window.location.protocol + '//' + window.location.host;
   //移除后端token
-  await useLoginApi().removeToken({redirect_uri: loginPageUrl, access_token: Session.get("token")});
+  // await useLoginApi().removeToken({redirect_uri: loginPageUrl, access_token: Session.get("token")});
   const isNoPower = await signIn({grant_type: 'openId', openId: userInfos.value.user.openId}, {
     clientId: system.clientId,
     clientSecret: system.clientSecretStr
@@ -254,9 +254,8 @@ const onSystemChange = async (system: object) => {
 }
 //切换系统后的跳转
 const signInSuccess = (isNoPower: boolean | undefined) => {
-  if (isNoPower) {
+  if (isNoPower || isNoPower == undefined) {
     ElMessage.warning('抱歉，您没有权限');
-    Session.clear();
   } else {
     // 如果是复制粘贴的路径，非首页/登录页，那么登录成功后重定向到对应的路径中
     if (route.query?.redirect) {
