@@ -4,6 +4,7 @@ import com.central.common.model.PageResult;
 import com.central.common.service.ISuperService;
 import com.central.oauth.model.Client;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,4 +26,8 @@ public interface IClientService extends ISuperService<Client> {
     void delClient(long id);
 
     Client loadClientByClientId(String clientId);
+
+    List<Client> findClientByUserId(Long userId);
+
+
 }

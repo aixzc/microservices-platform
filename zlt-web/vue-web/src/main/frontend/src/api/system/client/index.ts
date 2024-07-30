@@ -13,6 +13,12 @@ export function useClientApi() {
                 url: model.uaa.name + 'clients/all',
                 method: 'get',
             });
+        },
+        getUserClient: (userId: bigint) => {
+            return request({
+                url: model.uaa.name + `clients/user/${userId}`,
+                method: 'get',
+            });
         }
     };
 }

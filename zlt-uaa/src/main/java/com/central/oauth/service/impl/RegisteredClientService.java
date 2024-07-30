@@ -84,6 +84,10 @@ public class RegisteredClientService {
         return BeanUtil.copyProperties(clientObj, ClientDto.class);
     }
 
+    public List<ClientDto> listByUserId(Long userId) {
+        return BeanUtil.copyToList(clientService.findClientByUserId(userId), ClientDto.class);
+    }
+
     private String clientRedisKey(String clientId) {
         return SecurityConstants.CACHE_CLIENT_KEY + ":" + clientId;
     }

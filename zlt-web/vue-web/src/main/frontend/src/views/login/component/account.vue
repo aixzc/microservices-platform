@@ -43,7 +43,8 @@
             <ele-Briefcase/>
           </el-icon>
         </template>
-        <el-option v-for="system in state.clients" :key="system.clientId" :label="system.clientName" :value="system.clientId"/>
+        <el-option v-for="system in state.clients" :key="system.clientId" :label="system.clientName"
+                   :value="system.clientId"/>
       </el-select>
     </el-form-item>
     <el-form-item class="login-animation4" prop="validCode">
@@ -64,7 +65,7 @@
         </el-input>
       </el-col>
       <el-col :span="1"></el-col>
-      <el-col :span="8" >
+      <el-col :span="8">
         <img class="login-content-code" :src="state.checkCodeUrl" @click="genCode"/>
       </el-col>
     </el-form-item>
@@ -151,8 +152,9 @@ const onSignIn = (formEl: FormInstance | undefined) => {
 };
 // 登录成功后的跳转ElMessage
 const signInSuccess = (isNoPower: boolean | undefined) => {
-  if (isNoPower || isNoPower == undefined) {
+  if (!isNoPower || isNoPower == undefined) {
     ElMessage.warning('抱歉，您没有登录权限');
+    loginRef.value.resetFields();
   } else {
     // 初始化登录成功时间问候语
     let currentTimeInfo = currentTime.value;

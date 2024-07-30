@@ -21,8 +21,9 @@ service.interceptors.request.use(
         const token = Session.get('token');
         console.log('config', config)
         // 在发送请求之前做些什么 token
-        if (!config.headers['Authorization'] || token && !config.headers['Authorization'].startsWith('Basic')) {
-            config.headers!['Authorization'] = `Bearer ${Session.get('token')}`;
+        if ((config.headers['Authorization'] == undefined && token != undefined) ||
+            (config.headers['Authorization'] != undefined && !config.headers['Authorization'].startsWith('Basic'))) {
+            config.headers!['Authorization'] = `Bearer ${token}`;
         }
         return config;
     },
@@ -68,7 +69,7 @@ service.interceptors.response.use(
         } else {
             if (error.response.data && error.response.data.resp_msg) ElMessage.error(error.response.data.resp_msg);
             else console.log('token有问题');
-                // ElMessage.error('内部错误，请联系管理员');
+            // ElMessage.error('内部错误，请联系管理员');
         }
     }
 );

@@ -114,6 +114,7 @@ import mittBus from '/@/utils/mitt';
 import {Local, Session} from '/@/utils/storage';
 import {useLoginApi} from "/@/api/system/login";
 import {useClientApi} from "/@/api/system/client";
+import {useUserApi} from "/@/api/system/user";
 import {signIn} from "/@/views/login/ts/account";
 
 // 引入组件
@@ -137,6 +138,7 @@ const state = reactive({
   disabledSize: 'large',
 });
 const clientApi = useClientApi();
+const userApi = useUserApi();
 //系统列表
 const client = reactive({
   data: [],
@@ -240,34 +242,30 @@ const initI18nOrSize = (value: string, attr: string) => {
   (<any>state)[attr] = Local.get('themeConfig')[value];
 };
 const getAllClient = async () => {
-  client.data = await clientApi.getAll();
+  client.data = await clientApi.getUserClient(userInfos.value.user.id);
 }
 const onSystemChange = async (system: object) => {
   let loginPageUrl = window.location.protocol + '//' + window.location.host;
   //移除后端token
-  // await useLoginApi().removeToken({redirect_uri: loginPageUrl, access_token: Session.get("token")});
-  const isNoPower = await signIn({grant_type: 'openId', openId: userInfos.value.user.openId}, {
+  await useLoginApi().removeToken({redirect_uri: loginPageUrl, access_token: Session.get("token")});
+  await signIn({grant_type: 'openId', openId: userInfos.value.user.openId}, {
     clientId: system.clientId,
     clientSecret: system.clientSecretStr
   });
-  signInSuccess(isNoPower);
+  signInSuccess();
 }
 //切换系统后的跳转
-const signInSuccess = (isNoPower: boolean | undefined) => {
-  if (isNoPower || isNoPower == undefined) {
-    ElMessage.warning('抱歉，您没有权限');
+const signInSuccess = () => {
+  // 如果是复制粘贴的路径，非首页/登录页，那么登录成功后重定向到对应的路径中
+  if (route.query?.redirect) {
+    router.push({
+      path: <string>route.query?.redirect,
+      query: Object.keys(<string>route.query?.params).length > 0 ? JSON.parse(<string>route.query?.params) : '',
+    });
   } else {
-    // 如果是复制粘贴的路径，非首页/登录页，那么登录成功后重定向到对应的路径中
-    if (route.query?.redirect) {
-      router.push({
-        path: <string>route.query?.redirect,
-        query: Object.keys(<string>route.query?.params).length > 0 ? JSON.parse(<string>route.query?.params) : '',
-      });
-    } else {
-      router.push('/');
-    }
-    client.currentSystem = Session.get('system');
+    router.push('/');
   }
+  client.currentSystem = Session.get('system');
 };
 // 页面加载时
 onMounted(() => {

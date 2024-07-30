@@ -54,4 +54,12 @@
         from oauth_client_details
         <include refid="where"/>
     </select>
+
+    <select id="findClientByUserId" resultType="com.central.oauth.model.Client">
+        select ocd.*
+        from `user-center`.sys_role_user sru
+        join `user-center`.sys_role sr on sru.role_id = sr.id
+        left join `oauth-center`.oauth_client_details ocd on ocd.client_id = sr.tenant_id
+        where sru.user_id = #{userId}
+    </select>
 </mapper>

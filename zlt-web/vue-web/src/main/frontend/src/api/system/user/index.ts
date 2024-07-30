@@ -13,6 +13,12 @@ export function useUserApi() {
                 url: model.user.name + 'users/current',
                 method: 'get',
             });
+        },
+        getUserRoles: (userId: bigint) => {
+            return request({
+                url: model.user.name + `users/${userId}/roles`,
+                method: 'get',
+            });
         }
     };
 }

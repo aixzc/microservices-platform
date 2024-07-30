@@ -72,4 +72,9 @@ public class ClientServiceImpl extends SuperServiceImpl<ClientMapper, Client> im
         wrapper.eq("client_id", clientId);
         return this.getOne(wrapper);
     }
+
+    @Override
+    public List<Client> findClientByUserId(Long userId) {
+        return baseMapper.findClientByUserId(userId);
+    }
 }

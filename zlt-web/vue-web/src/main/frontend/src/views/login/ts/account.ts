@@ -12,6 +12,10 @@ const {themeConfig} = storeToRefs(storesThemeConfig);
 export async function signIn(form: object, client: clientObj | undefined) {
     const res = await useLoginApi().signIn(form, client);
     let isNoPower;
+    // 存储 token 到浏览器缓存
+    Session.set('token', res.access_token);
+    // 存储 当前系统id
+    Session.set('system', client != undefined ? client.clientId : themeConfig.value.systemClientId);
     if (!themeConfig.value.isRequestRoutes) {
         // 前端控制路由，2、请注意执行顺序
         isNoPower = await initFrontEndControlRoutes();
@@ -21,11 +25,12 @@ export async function signIn(form: object, client: clientObj | undefined) {
         // 执行完 initBackEndControlRoutes，再执行 signInSuccess
         isNoPower = await initBackEndControlRoutes();
     }
-    if (!isNoPower && isNoPower != undefined) {
-        // 存储 token 到浏览器缓存
-        Session.set('token', res.access_token);
-        // 存储 当前系统id
-        Session.set('system', client != undefined ? client.clientId : themeConfig.value.systemClientId);
+    if (!isNoPower || isNoPower == undefined) {
+        if (Session.get("token")) {
+            //移除后端token
+            await useLoginApi().removeToken({redirect_uri: null, access_token: Session.get("token")});
+        }
+        Session.clear();
     }
     return isNoPower;
 }

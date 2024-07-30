@@ -45,8 +45,7 @@ export async function initBackEndControlRoutes() {
     const res = await getBackEndControlRoutes();
     console.log("menu", res)
     // 无登录权限时，添加判断
-    // https://gitee.com/lyt-top/vue-next-admin/issues/I64HVO
-    if (res.length <= 0) return Promise.resolve(true);
+    if (res.length <= 0) return false;
     //菜单数据转换
     const menuData = rebuildRouteData(res);
     // 存储接口原始路由（未处理component），根据需求选择使用
@@ -57,6 +56,7 @@ export async function initBackEndControlRoutes() {
     await setAddRoute();
     // 设置路由到 pinia routesList 中（已处理成多级嵌套路由）及缓存多级嵌套数组处理后的一维数组
     setFilterMenuAndCacheTagsViewRoutes();
+    return true;
 }
 
 /**

@@ -9,11 +9,14 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.central.oauth.model.Client;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * @author zlt
  */
 @Mapper
 public interface ClientMapper extends SuperMapper<Client> {
-    List<Client> findList(Page<Client> page, @Param("params") Map<String, Object> params );
+    List<Client> findList(Page<Client> page, @Param("params") Map<String, Object> params);
+
+    List<Client> findClientByUserId(Long userId);
 }

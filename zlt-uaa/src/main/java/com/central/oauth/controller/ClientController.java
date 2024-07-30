@@ -1,7 +1,10 @@
 package com.central.oauth.controller;
 
+import com.central.common.context.LoginUserContextHolder;
+import com.central.common.model.LoginAppUser;
 import com.central.common.model.PageResult;
 import com.central.common.model.Result;
+import com.central.common.utils.LoginUserUtils;
 import com.central.oauth.model.Client;
 import com.central.oauth.service.impl.RegisteredClientService;
 import com.central.oauth2.common.pojo.ClientDto;
@@ -59,5 +62,12 @@ public class ClientController {
     public Result<String> saveOrUpdate(@RequestBody Client client) throws Exception {
         clientService.saveClient(client);
         return Result.succeed("操作成功");
+    }
+
+    @GetMapping("/user/{userId}")
+    @Operation(summary = "查询用户可操作的应用")
+    public Result<List<ClientDto>> userClient(@PathVariable Long userId) {
+        List<ClientDto> list = clientService.listByUserId(userId);
+        return Result.succeed(list);
     }
 }
