@@ -164,8 +164,8 @@ export function buildThisRoute(data: any) {
     return {
         "path": data.url,
         "name": data.name,
-        "component": data.path,
-        // "redirect": "/system/menu",
+        "component": data.path && data.path.length > 0 ? data.path : 'layout/routerView/parent',
+        "redirect": data.subMenus && data.subMenus.length > 0 ? data.subMenus[0].url : '',
         "meta": {
             "title": data.name,
             "isLink": "",

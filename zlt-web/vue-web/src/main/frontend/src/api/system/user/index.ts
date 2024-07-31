@@ -14,11 +14,18 @@ export function useUserApi() {
                 method: 'get',
             });
         },
-        getUserRoles: (userId: bigint) => {
+        updateUser: (data: any) => {
             return request({
-                url: model.user.name + `users/${userId}/roles`,
-                method: 'get',
+                url: model.user.name + `users`,
+                method: 'put',
+                data
             });
-        }
+        },
+        resetPassword: (id: bigint) => {
+            return request({
+                url: model.user.name + `/users/${id}/password`,
+                method: 'put'
+            });
+        },
     };
 }

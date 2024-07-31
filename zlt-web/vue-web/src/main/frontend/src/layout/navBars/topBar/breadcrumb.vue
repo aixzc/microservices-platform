@@ -48,7 +48,7 @@ const state = reactive<BreadcrumbState>({
 
 // 动态设置经典、横向布局不显示
 const isShowBreadcrumb = computed(() => {
-	initRouteSplit(route.path);
+	initRouteSplit(route.path, route);
 	const { layout, isBreadcrumb } = themeConfig.value;
 	if (layout === 'classic' || layout === 'transverse') return false;
 	else return isBreadcrumb ? true : false;
@@ -83,7 +83,7 @@ const getBreadcrumbList = (arr: RouteItems) => {
 	});
 };
 // 当前路由字符串切割成数组，并删除第一项空内容
-const initRouteSplit = (path: string) => {
+const initRouteSplit = (path: string, route: any) => {
 	if (!themeConfig.value.isBreadcrumb) return false;
 	state.breadcrumbList = [routesList.value[0]];
 	state.routeSplit = path.split('/');
@@ -97,11 +97,11 @@ const initRouteSplit = (path: string) => {
 };
 // 页面加载时
 onMounted(() => {
-	initRouteSplit(route.path);
+	initRouteSplit(route.path, route);
 });
 // 路由更新时
 onBeforeRouteUpdate((to) => {
-	initRouteSplit(to.path);
+	initRouteSplit(to.path, to);
 });
 </script>
 

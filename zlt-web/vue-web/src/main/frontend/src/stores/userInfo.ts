@@ -2,6 +2,8 @@ import {defineStore} from 'pinia';
 import {Session} from '/@/utils/storage';
 import {useUserApi} from '/@/api/system/user';
 import {useFileApi} from '/@/api/system/file';
+import boy from "/@/assets/define-boy.svg";
+import girl from "/@/assets/define-girl.svg";
 
 /**
  * 用户信息
@@ -37,7 +39,7 @@ export const useUserInfo = defineStore('userInfo', {
                     const data = await useUserApi().getCurrentUser();
                     const userInfos = {
                         user: data,
-                        photo: await useFileApi().getUrl({path: data.headImgUrl}),
+                        photo: !data.headImgUrl ? data.sex == 0 ? boy : girl : await useFileApi().getUrl({path: data.headImgUrl}),
                         time: new Date().getTime(),
                         roles: data.roles,
                         authBtnList: data.permissions,

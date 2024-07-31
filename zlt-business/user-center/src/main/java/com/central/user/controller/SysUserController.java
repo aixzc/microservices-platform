@@ -121,10 +121,10 @@ public class SysUserController {
      * @param sysUser
      */
     @PutMapping("/users")
-    @CachePut(value = "user", key = "#sysUser.username", unless="#result == null")
+    @CachePut(value = "user", key = "#sysUser.username", unless = "#result == null")
     //@AuditLog(operation = "'更新用户:' + #sysUser")
-    public void updateSysUser(@RequestBody SysUser sysUser) {
-        appUserService.updateById(sysUser);
+    public Result<Boolean> updateSysUser(@RequestBody SysUser sysUser) {
+        return Result.succeed(appUserService.updateById(sysUser), "修改成功");
     }
 
     /**
@@ -157,8 +157,8 @@ public class SysUserController {
      */
     @Operation(summary = "用户查询列表")
     @Parameters({
-            @Parameter(name = "page",description = "分页起始位置",required = true,in=ParameterIn.QUERY),
-            @Parameter(name = "limit",description = "分页结束位置",required = true,in= ParameterIn.QUERY)
+            @Parameter(name = "page", description = "分页起始位置", required = true, in = ParameterIn.QUERY),
+            @Parameter(name = "limit", description = "分页结束位置", required = true, in = ParameterIn.QUERY)
     })
     @GetMapping("/users")
     public PageResult<SysUser> findUsers(@RequestParam Map<String, Object> params) {
@@ -174,8 +174,8 @@ public class SysUserController {
     @Operation(summary = "修改用户状态")
     @GetMapping("/users/updateEnabled")
     @Parameters({
-            @Parameter(name = "id",description = "用户id",required = true,in=ParameterIn.QUERY),
-            @Parameter(name = "enabled",description = "是否启用",required = true,in= ParameterIn.QUERY)
+            @Parameter(name = "id", description = "用户id", required = true, in = ParameterIn.QUERY),
+            @Parameter(name = "enabled", description = "是否启用", required = true, in = ParameterIn.QUERY)
     })
     public Result updateEnabled(@RequestParam Map<String, Object> params) {
         Long id = MapUtils.getLong(params, "id");
@@ -256,7 +256,7 @@ public class SysUserController {
     @PostMapping(value = "/users/import")
     public Result importExcl(@RequestParam("file") MultipartFile excl) throws Exception {
         int rowNum = 0;
-        if(!excl.isEmpty()) {
+        if (!excl.isEmpty()) {
             List<SysUserExcel> list = ExcelUtil.importExcel(excl, 0, 1, SysUserExcel.class);
             rowNum = list.size();
             if (rowNum > 0) {
@@ -271,14 +271,14 @@ public class SysUserController {
                 appUserService.saveBatch(users);
             }
         }
-        return Result.succeed("导入数据成功，一共【"+rowNum+"】行");
+        return Result.succeed("导入数据成功，一共【" + rowNum + "】行");
     }
 
     @Operation(summary = "用户全文搜索列表")
     @Parameters({
-            @Parameter(name = "page",description = "分页起始位置",required = true,in=ParameterIn.QUERY),
-            @Parameter(name = "limit",description = "分页结束位置",required = true,in= ParameterIn.QUERY),
-            @Parameter(name = "queryStr",description = "搜索关键字",in= ParameterIn.QUERY)
+            @Parameter(name = "page", description = "分页起始位置", required = true, in = ParameterIn.QUERY),
+            @Parameter(name = "limit", description = "分页结束位置", required = true, in = ParameterIn.QUERY),
+            @Parameter(name = "queryStr", description = "搜索关键字", in = ParameterIn.QUERY)
     })
     @GetMapping("/users/search")
     public PageResult<JsonNode> search(SearchDto searchDto) {
@@ -289,15 +289,16 @@ public class SysUserController {
 
     /**
      * 获取用户并返回角色列表
+     *
      * @param username
      * @return
      */
     @GetMapping(value = "/users/roleUser/{username}")
     @Operation(summary = "查询用户-带角色信息")
     @Cacheable(value = "userRoles", key = "#username")
-    public SysUser selectRoleUser(@PathVariable("username") String username){
+    public SysUser selectRoleUser(@PathVariable("username") String username) {
         SysUser sysUser = selectByUsername(username);
-        if(ObjectUtil.isNotNull(sysUser)){
+        if (ObjectUtil.isNotNull(sysUser)) {
             List<SysRole> roleList = findRolesByUserId(sysUser.getId());
             sysUser.setRoles(roleList);
         }

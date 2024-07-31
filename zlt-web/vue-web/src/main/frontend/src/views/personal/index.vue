@@ -9,7 +9,7 @@
               <el-upload class="h100 personal-user-left-upload" action="https://jsonplaceholder.typicode.com/posts/"
                          multiple :limit="1">
                 <img
-                    src="https://img2.baidu.com/it/u=1978192862,2048448374&fm=253&fmt=auto&app=138&f=JPEG?w=504&h=500"/>
+                    :src="defineImg"/>
               </el-upload>
             </div>
             <div class="personal-user-right">
@@ -56,21 +56,21 @@
       </el-col>
 
       <!-- 营销推荐 -->
-<!--      <el-col :span="24">-->
-<!--        <el-card shadow="hover" class="mt15" header="营销推荐">-->
-<!--          <el-row :gutter="15" class="personal-recommend-row">-->
-<!--            <el-col :sm="6" v-for="(v, k) in state.recommendList" :key="k" class="personal-recommend-col">-->
-<!--              <div class="personal-recommend" :style="{ 'background-color': v.bg }">-->
-<!--                <SvgIcon :name="v.icon" :size="70" :style="{ color: v.iconColor }"/>-->
-<!--                <div class="personal-recommend-auto">-->
-<!--                  <div>{{ v.title }}</div>-->
-<!--                  <div class="personal-recommend-msg">{{ v.msg }}</div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </el-col>-->
-<!--          </el-row>-->
-<!--        </el-card>-->
-<!--      </el-col>-->
+      <!--      <el-col :span="24">-->
+      <!--        <el-card shadow="hover" class="mt15" header="营销推荐">-->
+      <!--          <el-row :gutter="15" class="personal-recommend-row">-->
+      <!--            <el-col :sm="6" v-for="(v, k) in state.recommendList" :key="k" class="personal-recommend-col">-->
+      <!--              <div class="personal-recommend" :style="{ 'background-color': v.bg }">-->
+      <!--                <SvgIcon :name="v.icon" :size="70" :style="{ color: v.iconColor }"/>-->
+      <!--                <div class="personal-recommend-auto">-->
+      <!--                  <div>{{ v.title }}</div>-->
+      <!--                  <div class="personal-recommend-msg">{{ v.msg }}</div>-->
+      <!--                </div>-->
+      <!--              </div>-->
+      <!--            </el-col>-->
+      <!--          </el-row>-->
+      <!--        </el-card>-->
+      <!--      </el-col>-->
 
       <!-- 更新信息 -->
       <el-col :span="24">
@@ -80,7 +80,7 @@
             <el-row :gutter="35">
               <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="mb20">
                 <el-form-item label="昵称">
-                  <el-input v-model="state.personalForm.name" placeholder="请输入昵称" clearable></el-input>
+                  <el-input v-model="state.personalForm.nickname" placeholder="请输入昵称" clearable></el-input>
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="mb20">
@@ -89,35 +89,21 @@
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="mb20">
-                <el-form-item label="签名">
-                  <el-input v-model="state.personalForm.autograph" placeholder="请输入签名" clearable></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="mb20">
-                <el-form-item label="职业">
-                  <el-select v-model="state.personalForm.occupation" placeholder="请选择职业" clearable class="w100">
-                    <el-option label="计算机 / 互联网 / 通信" value="1"></el-option>
-                    <el-option label="生产 / 工艺 / 制造" value="2"></el-option>
-                    <el-option label="医疗 / 护理 / 制药" value="3"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="mb20">
                 <el-form-item label="手机">
-                  <el-input v-model="state.personalForm.phone" placeholder="请输入手机" clearable></el-input>
+                  <el-input v-model="state.personalForm.mobile" placeholder="请输入手机" clearable></el-input>
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="mb20">
                 <el-form-item label="性别">
                   <el-select v-model="state.personalForm.sex" placeholder="请选择性别" clearable class="w100">
-                    <el-option label="男" value="1"></el-option>
-                    <el-option label="女" value="2"></el-option>
+                    <el-option label="男" :value="0"></el-option>
+                    <el-option label="女" :value="1"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                 <el-form-item>
-                  <el-button type="primary">
+                  <el-button @click="updateUser" type="primary">
                     <el-icon>
                       <ele-Position/>
                     </el-icon>
@@ -135,43 +121,43 @@
                 <div class="personal-edit-safe-item-left-value">当前密码强度：强</div>
               </div>
               <div class="personal-edit-safe-item-right">
-                <el-button text type="primary">立即修改</el-button>
+                <el-button @click="resetPassword" text type="primary">重置密码</el-button>
               </div>
             </div>
           </div>
-<!--          <div class="personal-edit-safe-box">-->
-<!--            <div class="personal-edit-safe-item">-->
-<!--              <div class="personal-edit-safe-item-left">-->
-<!--                <div class="personal-edit-safe-item-left-label">密保手机</div>-->
-<!--                <div class="personal-edit-safe-item-left-value">已绑定手机：132****4108</div>-->
-<!--              </div>-->
-<!--              <div class="personal-edit-safe-item-right">-->
-<!--                <el-button text type="primary">立即修改</el-button>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="personal-edit-safe-box">-->
-<!--            <div class="personal-edit-safe-item">-->
-<!--              <div class="personal-edit-safe-item-left">-->
-<!--                <div class="personal-edit-safe-item-left-label">密保问题</div>-->
-<!--                <div class="personal-edit-safe-item-left-value">已设置密保问题，账号安全大幅度提升</div>-->
-<!--              </div>-->
-<!--              <div class="personal-edit-safe-item-right">-->
-<!--                <el-button text type="primary">立即设置</el-button>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="personal-edit-safe-box">-->
-<!--            <div class="personal-edit-safe-item">-->
-<!--              <div class="personal-edit-safe-item-left">-->
-<!--                <div class="personal-edit-safe-item-left-label">绑定QQ</div>-->
-<!--                <div class="personal-edit-safe-item-left-value">已绑定QQ：110****566</div>-->
-<!--              </div>-->
-<!--              <div class="personal-edit-safe-item-right">-->
-<!--                <el-button text type="primary">立即设置</el-button>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
+          <!--          <div class="personal-edit-safe-box">-->
+          <!--            <div class="personal-edit-safe-item">-->
+          <!--              <div class="personal-edit-safe-item-left">-->
+          <!--                <div class="personal-edit-safe-item-left-label">密保手机</div>-->
+          <!--                <div class="personal-edit-safe-item-left-value">已绑定手机：132****4108</div>-->
+          <!--              </div>-->
+          <!--              <div class="personal-edit-safe-item-right">-->
+          <!--                <el-button text type="primary">立即修改</el-button>-->
+          <!--              </div>-->
+          <!--            </div>-->
+          <!--          </div>-->
+          <!--          <div class="personal-edit-safe-box">-->
+          <!--            <div class="personal-edit-safe-item">-->
+          <!--              <div class="personal-edit-safe-item-left">-->
+          <!--                <div class="personal-edit-safe-item-left-label">密保问题</div>-->
+          <!--                <div class="personal-edit-safe-item-left-value">已设置密保问题，账号安全大幅度提升</div>-->
+          <!--              </div>-->
+          <!--              <div class="personal-edit-safe-item-right">-->
+          <!--                <el-button text type="primary">立即设置</el-button>-->
+          <!--              </div>-->
+          <!--            </div>-->
+          <!--          </div>-->
+          <!--          <div class="personal-edit-safe-box">-->
+          <!--            <div class="personal-edit-safe-item">-->
+          <!--              <div class="personal-edit-safe-item-left">-->
+          <!--                <div class="personal-edit-safe-item-left-label">绑定QQ</div>-->
+          <!--                <div class="personal-edit-safe-item-left-value">已绑定QQ：110****566</div>-->
+          <!--              </div>-->
+          <!--              <div class="personal-edit-safe-item-right">-->
+          <!--                <el-button text type="primary">立即设置</el-button>-->
+          <!--              </div>-->
+          <!--            </div>-->
+          <!--          </div>-->
         </el-card>
       </el-col>
     </el-row>
@@ -179,23 +165,31 @@
 </template>
 
 <script setup lang="ts" name="personal">
-import {reactive, computed} from 'vue';
+import {reactive, computed, ref, onMounted} from 'vue';
 import {formatAxis} from '/@/utils/formatTime';
 import {newsInfoList, recommendList} from './mock';
 import {Session} from "/@/utils/storage";
+import {useFileApi} from "/@/api/system/file";
+import {useUserApi} from "/@/api/system/user";
+import boy from '/@/assets/define-boy.svg';
+import girl from '/@/assets/define-girl.svg';
+import {useUserInfo} from "/@/stores/userInfo";
+import pinia from "/@/stores";
+import {ElMessageBox} from 'element-plus';
 
-const userInfo = Session.get('userInfo');
+let userInfo = Session.get('userInfo');
+const defineImg = ref();
 // 定义变量内容
-const state = reactive<PersonalState>({
+const state = reactive<PersonalInfo>({
   newsInfoList,
-  recommendList,
+  // recommendList,
   personalForm: {
-    name: userInfo.user.username,
+    id: userInfo.user.id,
+    username: userInfo.user.username,
+    nickname: userInfo.user.nickname,
     email: '',
-    autograph: '',
-    occupation: '',
-    phone: '',
-    sex: '',
+    mobile: userInfo.user.mobile,
+    sex: userInfo.user.sex,
   },
 });
 
@@ -209,6 +203,35 @@ const roleNames = computed(() => {
 // 当前时间提示语
 const currentTime = computed(() => {
   return formatAxis(new Date());
+});
+
+//用户头像地址url
+const getUserImg = async () => {
+  defineImg.value = !userInfo.user.headImgUrl ? userInfo.user.sex == 0 ? boy : girl
+      : await useFileApi().getUrl({path: userInfo.user.headImgUrl});
+}
+
+//修改用户
+const updateUser = async () => {
+  await useUserApi().updateUser(state.personalForm);
+  const res = <UserInfos>await useUserInfo(pinia).getApiUserInfo();
+  await getUserImg();
+}
+
+//重置密码
+const resetPassword = () => {
+  ElMessageBox.confirm(`此操作将重置密码，是否继续?`, '提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(async () => {
+    await useUserApi().resetPassword(userInfo.user.id);
+  }).catch(() => {
+      });
+}
+
+onMounted(() => {
+  getUserImg();
 });
 </script>
 
