@@ -49,9 +49,8 @@ service.interceptors.response.use(
             ElMessageBox.alert(res.resp_msg, '提示', {})
             return Promise.reject(service.interceptors.response);
         } else {
-            if (res.datas) {
-                return res.datas;
-            }
+            if (res.resp_code && res.resp_code === 0 && res.resp_msg && res.resp_msg.length > 0) ElMessage.success(res.resp_msg);
+            if (res.datas) return res.datas;
             return res;
         }
     },
