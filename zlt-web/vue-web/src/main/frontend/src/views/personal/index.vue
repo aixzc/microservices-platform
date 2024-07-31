@@ -15,13 +15,13 @@
             <div class="personal-user-right">
               <el-row>
                 <el-col :span="24" class="personal-title mb18">
-                  {{ currentTime }}，{{ userInfo.user.username }}，生活变的再糟糕，也不妨碍我变得更好！
+                  {{ currentTime }}，{{ userInfo.data.user.username }}，生活变的再糟糕，也不妨碍我变得更好！
                 </el-col>
                 <el-col :span="24">
                   <el-row>
                     <el-col :xs="24" :sm="8" class="personal-item mb6">
                       <div class="personal-item-label">昵称：</div>
-                      <div class="personal-item-value">{{ userInfo.user.nickname }}</div>
+                      <div class="personal-item-value">{{ userInfo.data.user.nickname }}</div>
                     </el-col>
                     <el-col :xs="24" :sm="16" class="personal-item mb6">
                       <div class="personal-item-label">身份：</div>
@@ -165,9 +165,9 @@
 </template>
 
 <script setup lang="ts" name="personal">
-import {reactive, computed, ref, onMounted} from 'vue';
+import {computed, onMounted, reactive, ref} from 'vue';
 import {formatAxis} from '/@/utils/formatTime';
-import {newsInfoList, recommendList} from './mock';
+import {newsInfoList} from './mock';
 import {Session} from "/@/utils/storage";
 import {useFileApi} from "/@/api/system/file";
 import {useUserApi} from "/@/api/system/user";
@@ -177,25 +177,27 @@ import {useUserInfo} from "/@/stores/userInfo";
 import pinia from "/@/stores";
 import {ElMessageBox} from 'element-plus';
 
-let userInfo = Session.get('userInfo');
+const userInfo = reactive({
+  data: Session.get('userInfo')
+});
 const defineImg = ref();
 // 定义变量内容
 const state = reactive<PersonalInfo>({
   newsInfoList,
   // recommendList,
   personalForm: {
-    id: userInfo.user.id,
-    username: userInfo.user.username,
-    nickname: userInfo.user.nickname,
+    id: userInfo.data.user.id,
+    username: userInfo.data.user.username,
+    nickname: userInfo.data.user.nickname,
     email: '',
-    mobile: userInfo.user.mobile,
-    sex: userInfo.user.sex,
+    mobile: userInfo.data.user.mobile,
+    sex: userInfo.data.user.sex,
   },
 });
 
 const roleNames = computed(() => {
   const roleName: any = [];
-  userInfo.roles.map((role: any) => {
+  userInfo.data.roles.map((role: any) => {
     roleName.push(role.name)
   });
   return roleName.join('、');
@@ -207,14 +209,14 @@ const currentTime = computed(() => {
 
 //用户头像地址url
 const getUserImg = async () => {
-  defineImg.value = !userInfo.user.headImgUrl ? userInfo.user.sex == 0 ? boy : girl
-      : await useFileApi().getUrl({path: userInfo.user.headImgUrl});
+  defineImg.value = !userInfo.data.user.headImgUrl ? userInfo.data.user.sex == 0 ? boy : girl
+      : await useFileApi().getUrl({path: userInfo.data.user.headImgUrl});
 }
 
 //修改用户
 const updateUser = async () => {
   await useUserApi().updateUser(state.personalForm);
-  const res = <UserInfos>await useUserInfo(pinia).getApiUserInfo();
+  userInfo.data = <UserInfos>await useUserInfo(pinia).getApiUserInfo();
   await getUserImg();
 }
 
@@ -225,7 +227,7 @@ const resetPassword = () => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    await useUserApi().resetPassword(userInfo.user.id);
+    await useUserApi().resetPassword(userInfo.data.user.id);
   }).catch(() => {
       });
 }
