@@ -70,9 +70,8 @@ public class FileController {
      * @return
      */
     @PostMapping("/url")
-    public Result<String> viewUrl(@RequestBody String json) {
+    public void viewUrl(@RequestBody String json) {
         String path = fileService.getUrl(null, JSONObject.parseObject(json).getString("path"));
         assert StrUtil.isNotBlank(path);
-        return Result.succeed(path, "获取成功");
     }
 }

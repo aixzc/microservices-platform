@@ -91,7 +91,6 @@ import {v4 as uuidv4} from 'uuid';
 import model from '/@/api/common/model';
 import {signIn} from '/@/views/login/ts/account';
 import {NextLoading} from "/@/utils/loading";
-import {Session} from "/@/utils/storage";
 import {ElMessage} from 'element-plus';
 
 // 定义变量内容

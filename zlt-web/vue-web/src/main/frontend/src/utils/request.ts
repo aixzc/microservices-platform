@@ -37,8 +37,8 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     (response) => {
         const res = response.data;
+        console.log(response)
         if (res.resp_code && res.resp_code !== 0) {
-            console.log(22222)
             // `token` 过期或者账号已在别处登录
             if (res.resp_code === 401 || res.resp_code === 4001) {
                 console.log(33333)
@@ -49,7 +49,7 @@ service.interceptors.response.use(
             ElMessageBox.alert(res.resp_msg, '提示', {})
             return Promise.reject(service.interceptors.response);
         } else {
-            if (res.resp_code && res.resp_code === 0 && res.resp_msg && res.resp_msg.length > 0) ElMessage.success(res.resp_msg);
+            if (response.config.method != 'get' && res.resp_code != undefined && res.resp_code === 0 && res.resp_msg != undefined && res.resp_msg.length > 0) ElMessage.success(res.resp_msg);
             if (res.datas) return res.datas;
             return res;
         }

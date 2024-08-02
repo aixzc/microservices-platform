@@ -14,7 +14,7 @@ import java.util.Map;
  */
 @Component
 @Mapper
-public interface SysGeneratorMapper extends SuperMapper {
+public interface SysGeneratorMapper extends SuperMapper<Map<String, Object>> {
     List<Map<String, Object>> queryList(Page<Map<String, Object>> page, @Param("p") Map<String, Object> map);
 
     int queryTotal(Map<String, Object> map);

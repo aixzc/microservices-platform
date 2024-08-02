@@ -6,10 +6,12 @@
         <el-card shadow="hover" header="个人信息">
           <div class="personal-user">
             <div class="personal-user-left">
-              <el-upload class="h100 personal-user-left-upload" action="https://jsonplaceholder.typicode.com/posts/"
-                         multiple :limit="1">
-                <img
-                    :src="defineImg"/>
+              <el-upload class="h100 personal-user-left-upload" :action="baseIp + model.file.name + `files-anon`"
+                         multiple :limit="1" :on-success="uploadHeadImg"
+                         :headers="{Authorization: `Bearer ${Session.get('token')}`}"
+                         :show-file-list="false">
+                <img :src="defineImg" alt=""/>
+
               </el-upload>
             </div>
             <div class="personal-user-right">
@@ -25,9 +27,7 @@
                     </el-col>
                     <el-col :xs="24" :sm="16" class="personal-item mb6">
                       <div class="personal-item-label">身份：</div>
-                      <div class="personal-item-value">{{
-                          roleNames
-                        }}
+                      <div class="personal-item-value">{{ roleNames }}
                       </div>
                     </el-col>
                   </el-row>
@@ -175,8 +175,11 @@ import boy from '/@/assets/define-boy.svg';
 import girl from '/@/assets/define-girl.svg';
 import {useUserInfo} from "/@/stores/userInfo";
 import pinia from "/@/stores";
-import {ElMessageBox} from 'element-plus';
+import {ElMessageBox, UploadProps} from 'element-plus';
+import model from '/@/api/common/model';
 
+
+const baseIp = import.meta.env.VITE_API_URL;
 const userInfo = reactive({
   data: Session.get('userInfo')
 });
@@ -192,6 +195,7 @@ const state = reactive<PersonalInfo>({
     email: '',
     mobile: userInfo.data.user.mobile,
     sex: userInfo.data.user.sex,
+    headImgUrl: userInfo.data.user.headImgUrl
   },
 });
 
@@ -220,6 +224,12 @@ const updateUser = async () => {
   await getUserImg();
 }
 
+//上传头像成功后
+const uploadHeadImg: UploadProps['onSuccess'] = (response) => {
+  state.personalForm.headImgUrl = response.path;
+  updateUser();
+}
+
 //重置密码
 const resetPassword = () => {
   ElMessageBox.confirm(`此操作将重置密码，是否继续?`, '提示', {
@@ -229,7 +239,7 @@ const resetPassword = () => {
   }).then(async () => {
     await useUserApi().resetPassword(userInfo.data.user.id);
   }).catch(() => {
-      });
+  });
 }
 
 onMounted(() => {

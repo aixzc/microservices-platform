@@ -1,14 +1,8 @@
 package com.central.generator.service.impl;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.ZipOutputStream;
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.central.common.model.PageResult;
+import com.central.common.service.impl.SuperServiceImpl;
 import com.central.generator.mapper.SysGeneratorMapper;
 import com.central.generator.service.SysGeneratorService;
 import com.central.generator.utils.GenUtils;
@@ -17,12 +11,18 @@ import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipOutputStream;
+
 /**
  * @Author zlt
  */
 @Slf4j
 @Service
-public class SysGeneratorServiceImpl extends ServiceImpl implements SysGeneratorService {
+public class SysGeneratorServiceImpl extends SuperServiceImpl<SysGeneratorMapper, Map<String, Object>> implements SysGeneratorService {
     @Autowired
     private SysGeneratorMapper sysGeneratorMapper;
 

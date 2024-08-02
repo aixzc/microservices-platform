@@ -10,6 +10,7 @@ declare type PersonalInfo = {
 		email: string;
 		mobile: string;
 		sex: bigint;
+		headImgUrl: string;
 	};
 };
 

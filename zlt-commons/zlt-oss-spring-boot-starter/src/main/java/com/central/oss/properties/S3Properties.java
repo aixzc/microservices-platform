@@ -3,6 +3,8 @@ package com.central.oss.properties;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 /**
  * aws s3协议配置
  *
@@ -39,4 +41,8 @@ public class S3Properties {
      * path-style
      */
     private Boolean pathStyleAccessEnabled = true;
+
+    public String getBucketName() {
+        return bucketName + "/" + UUID.randomUUID();
+    }
 }
