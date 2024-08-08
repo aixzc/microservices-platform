@@ -23,7 +23,7 @@ import com.central.ocr.service.IAnalysisResultService;
  */
 @Slf4j
 @Service
-public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper, AnalysisResult> implements IAnalysisResultService {
+public class AnalysisResultServiceImpl extends SuperServiceImpl<AnalysisResultMapper, AnalysisResult> implements IAnalysisResultService {
     /**
      * 列表
      * @param params

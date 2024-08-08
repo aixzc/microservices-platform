@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author lyric
@@ -95,7 +96,7 @@ public class AnalysisFileController {
     @Operation(summary = "根据fileId识别文件")
     @Parameter(name = "fileId", description = "文件id", in = ParameterIn.QUERY, required = true)
     @PostMapping("/{fileId}")
-    public Result analysisFileByFileId(@PathVariable String fileId) {
+    public Result analysisFileByFileId(@PathVariable String fileId) throws ExecutionException, InterruptedException {
         analysisFileService.analysisFileByFileId(fileId);
         return Result.succeed("识别完成");
     }

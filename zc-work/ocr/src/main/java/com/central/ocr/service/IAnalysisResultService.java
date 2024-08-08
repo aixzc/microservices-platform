@@ -13,7 +13,7 @@ import java.util.Map;
  * @author lyric
  * @date 2024-08-05 13:52:43
  */
-public interface IAnalysisResultService extends IService<AnalysisResult> {
+public interface IAnalysisResultService extends ISuperService<AnalysisResult> {
     /**
      * 列表
      * @param params

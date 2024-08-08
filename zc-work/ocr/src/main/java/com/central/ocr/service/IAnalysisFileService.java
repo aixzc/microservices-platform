@@ -6,6 +6,7 @@ import com.central.common.service.ISuperService;
 import com.central.ocr.model.AnalysisFile;
 
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  *
@@ -13,7 +14,7 @@ import java.util.Map;
  * @author lyric
  * @date 2024-08-05 11:24:43
  */
-public interface IAnalysisFileService extends IService<AnalysisFile> {
+public interface IAnalysisFileService extends ISuperService<AnalysisFile> {
     /**
      * 列表
      * @param params
@@ -24,6 +25,6 @@ public interface IAnalysisFileService extends IService<AnalysisFile> {
     /**
      * 根据文件id解析文字
      */
-    void analysisFileByFileId(String fileId);
+    void analysisFileByFileId(String fileId) throws ExecutionException, InterruptedException;
 }
 

@@ -2,6 +2,8 @@ package com.central.file.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.central.common.context.LoginUserContextHolder;
+import com.central.common.model.LoginAppUser;
 import com.central.common.model.PageResult;
 import com.central.common.model.Result;
 import com.central.file.model.FileInfo;
@@ -58,7 +60,11 @@ public class FileController {
     @GetMapping("/files/{id}")
     public Result getById(@PathVariable String id) {
         try {
-            return Result.succeed(fileService.getById(id), "查询成功");
+            FileInfo fileInfo = fileService.getById(id);
+            if (StrUtil.isNotBlank(fileInfo.getPath())) {
+                fileInfo.setPath(fileService.getUrl(null, fileInfo.getPath()));
+            }
+            return Result.succeed(fileInfo, "查询成功");
         } catch (Exception ex) {
             return Result.failed("查询失败");
         }

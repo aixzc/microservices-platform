@@ -9,6 +9,7 @@ import com.central.common.feign.FileService;
 import com.central.common.model.FileInfo;
 import com.central.common.model.PageResult;
 import com.central.common.model.Result;
+import com.central.common.service.impl.SuperServiceImpl;
 import com.central.ocr.mapper.AnalysisFileMapper;
 import com.central.ocr.model.AnalysisFile;
 import com.central.ocr.model.AnalysisResult;
@@ -19,12 +20,14 @@ import com.central.ocr.vo.OcrAnalysisDataVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author lyric
@@ -32,7 +35,7 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-public class AnalysisFileServiceImpl extends ServiceImpl<AnalysisFileMapper, AnalysisFile> implements IAnalysisFileService {
+public class AnalysisFileServiceImpl extends SuperServiceImpl<AnalysisFileMapper, AnalysisFile> implements IAnalysisFileService {
 
     @Resource
     private IOcrService ocrService;
@@ -57,32 +60,29 @@ public class AnalysisFileServiceImpl extends ServiceImpl<AnalysisFileMapper, Ana
     }
 
     @Override
-    public void analysisFileByFileId(String fileId) {
-        try {
-            Result<FileInfo> result = fileService.selectByFileId(fileId);
-            Assert.state(result.getResp_code() != 0, "查询文件失败");
-            FileInfo fileInfo = result.getDatas();
-            OcrAnalysisDataVo vo = ocrService.loadByImgUrl(fileInfo.getPath());
-            //插入解析主表
-            AnalysisFile analysisFile = new AnalysisFile();
-            analysisFile.setAnalysisFileId(Integer.valueOf(fileId));
-            baseMapper.insert(analysisFile);
-            List<String> list = Arrays.asList(StrUtil.split(vo.getContent(), 400));
-            if (CollUtil.isNotEmpty(list)) {
-                List<AnalysisResult> analysisResults = new ArrayList<>();
-                for (String content : list) {
-                    AnalysisResult analysisResult = new AnalysisResult();
-                    analysisResult.setAnalysisId(analysisFile.getId().intValue());
-                    analysisResult.setResultContent(content);
-                    analysisResult.setSortNum(list.indexOf(content));
-                    analysisResults.add(analysisResult);
-                }
-                if (CollUtil.isNotEmpty(analysisResults)) {
-                    analysisResultService.saveOrUpdateBatch(analysisResults, 10);
-                }
+    @Transactional
+    public void analysisFileByFileId(String fileId) throws ExecutionException, InterruptedException {
+        Result<FileInfo> result = fileService.selectByFileId(fileId);
+        Assert.state(result.getResp_code() == 0, "查询文件失败");
+        FileInfo fileInfo = result.getDatas();
+        OcrAnalysisDataVo vo = ocrService.loadByImgUrl(fileInfo.getPath());
+        //插入解析主表
+        AnalysisFile analysisFile = new AnalysisFile();
+        analysisFile.setAnalysisFileId(fileId);
+        baseMapper.insert(analysisFile);
+        List<String> list = Arrays.asList(StrUtil.split(vo.getContent(), 400));
+        if (CollUtil.isNotEmpty(list)) {
+            List<AnalysisResult> analysisResults = new ArrayList<>();
+            for (String content : list) {
+                AnalysisResult analysisResult = new AnalysisResult();
+                analysisResult.setAnalysisId(analysisFile.getId().intValue());
+                analysisResult.setResultContent(content);
+                analysisResult.setSortNum(list.indexOf(content));
+                analysisResults.add(analysisResult);
             }
-        } catch (Exception ignored) {
-
+            if (CollUtil.isNotEmpty(analysisResults)) {
+                analysisResultService.saveBatch(analysisResults);
+            }
         }
     }
 }

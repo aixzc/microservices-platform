@@ -1,2 +1,3 @@
 com.central.common.feign.fallback.UserServiceFallbackFactory
+com.central.common.feign.fallback.FileServiceFallbackFactory
 com.central.common.lock.LockAspect

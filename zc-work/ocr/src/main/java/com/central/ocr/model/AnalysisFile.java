@@ -1,9 +1,6 @@
 package com.central.ocr.model;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.central.common.model.SuperEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -22,11 +19,13 @@ import java.io.Serial;
 public class AnalysisFile extends SuperEntity<AnalysisFile> {
     @Serial
     private static final long serialVersionUID = 1L;
-    private Integer analysisFileId;
-    private Integer creatorId;
+    private String analysisFileId;
     private String remark;
     @TableLogic
     private Integer deleted;
+    @TableField(fill = FieldFill.INSERT)
+    private Integer creatorId;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Integer updateId;
 
     @TableField(exist = false)

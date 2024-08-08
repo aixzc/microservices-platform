@@ -17,7 +17,7 @@ export function useOcrApi() {
         },
         ocrAnalysis: (fileId: string) => {
             return request({
-                url: model.ocr.name + 'analysis/file/{fileId}',
+                url: model.ocr.name + `analysis/file/${fileId}`,
                 method: 'post'
             });
         },

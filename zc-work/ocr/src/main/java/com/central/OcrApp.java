@@ -1,5 +1,6 @@
 package com.central;
 
+import com.central.common.lb.annotation.EnableFeignInterceptor;
 import com.central.ocr.properties.OcrProperties;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -11,6 +12,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableDiscoveryClient
 @SpringBootApplication
 @EnableFeignClients
+@EnableFeignInterceptor
 @EnableConfigurationProperties(OcrProperties.class)
 @MapperScan(basePackages = "com.central.ocr.mapper")
 public class OcrApp {

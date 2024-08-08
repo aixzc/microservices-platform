@@ -14,12 +14,6 @@
           识别文件
         </el-button>
       </el-upload>
-      <el-button size="default" type="success" class="ml10" @click="readFile">
-        <el-icon>
-          <ele-FolderAdd/>
-        </el-icon>
-        识别
-      </el-button>
       <Table
           ref="tableRef"
           v-bind="state.tableData"
@@ -105,9 +99,7 @@ const onTablePageChange = (page: TableDemoPageType) => {
 };
 
 const uploadOcrImg: UploadProps['onSuccess'] = async (response) => {
-  await useFileApi().getUrl({path: response.path}).then(async (res) => {
-    await useOcrApi().ocrAnalysis(response.id);
-  });
+  await useOcrApi().ocrAnalysis(response.id);
 }
 // 拖动显示列排序回调
 const onSortHeader = (data: TableHeaderType[]) => {
