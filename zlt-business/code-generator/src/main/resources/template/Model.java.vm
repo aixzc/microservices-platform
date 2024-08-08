@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import java.math.BigDecimal;
 #end
 import java.util.Date;
+import java.io.Serial;
 
 /**
  * ${comments}
@@ -21,6 +22,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = false)
 @TableName("${tableName}")
 public class ${className} extends SuperEntity {
+    @Serial
     private static final long serialVersionUID=1L;
 
 #foreach ($column in $columns)

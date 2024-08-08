@@ -16,4 +16,8 @@ public interface ServiceNameConstants {
      * 搜索中心服务
      */
     String SEARCH_SERVICE = "search-center";
+    /**
+     * 文件服务
+     */
+    String FILE_SERVICE = "file-center";
 }

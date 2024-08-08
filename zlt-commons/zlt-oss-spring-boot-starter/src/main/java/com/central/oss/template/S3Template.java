@@ -145,4 +145,9 @@ public class S3Template implements InitializingBean {
             IOUtils.copy(s3is, os);
         }
     }
+
+    @SneakyThrows
+    public FileServerProperties getFileProperties() {
+        return fileProperties;
+    }
 }

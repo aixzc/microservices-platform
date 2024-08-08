@@ -3,6 +3,7 @@ package com.central.common.datascope.mp.sql.handler;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.central.common.context.LoginUserContextHolder;
 import com.central.common.enums.DataScope;
 import com.central.common.feign.UserService;
@@ -21,7 +22,7 @@ import java.util.Objects;
  */
 public class CreatorDataScopeSqlHandler implements SqlHandler{
 
-    @Resource
+//    @Resource
     UserService userService;
 
     @Resource
@@ -37,6 +38,7 @@ public class CreatorDataScopeSqlHandler implements SqlHandler{
     public String handleScopeSql() {
         LoginAppUser user = LoginUserContextHolder.getUser();
         Assert.notNull(user, "登陆人不能为空");
+        userService = SpringUtil.getBean(UserService.class);
         List<SysRole> roleList = userService.findRolesByUserId(user.getId());
         return StrUtil.isBlank(dataScopeProperties.getCreatorIdColumnName())
                 ||CollUtil.isEmpty(roleList)

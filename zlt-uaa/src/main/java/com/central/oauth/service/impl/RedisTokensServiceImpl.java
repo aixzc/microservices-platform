@@ -4,7 +4,6 @@ import cn.hutool.core.util.PageUtil;
 import cn.hutool.core.util.StrUtil;
 import com.central.common.constant.SecurityConstants;
 import com.central.common.model.PageResult;
-import com.central.common.redis.template.RedisRepository;
 import com.central.oauth.model.TokenVo;
 import com.central.oauth.service.ITokensService;
 import lombok.RequiredArgsConstructor;
@@ -14,14 +13,11 @@ import org.redisson.api.RBucket;
 import org.redisson.api.RList;
 import org.redisson.api.RedissonClient;
 import org.redisson.codec.SerializationCodec;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.stereotype.Service;
 
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,14 +44,14 @@ public class RedisTokensServiceImpl implements ITokensService {
     public PageResult<TokenVo> listTokens(Map<String, Object> params, String clientId) {
         Integer page = MapUtils.getInteger(params, "page");
         Integer limit = MapUtils.getInteger(params, "limit");
-        int[] startEnds = PageUtil.transToStartEnd(page-1, limit);
+        int[] startEnds = PageUtil.transToStartEnd(page - 1, limit);
         //根据请求参数生成redis的key
         String redisKey = getRedisKey(params, clientId);
         RList<String> tokenList = redisson.getList(redisKey);
         long size = tokenList.size();
         List<TokenVo> result = new ArrayList<>(limit);
         //查询token集合
-        List<String> tokens = tokenList.range(startEnds[0], startEnds[1]-1);
+        List<String> tokens = tokenList.range(startEnds[0], startEnds[1] - 1);
         if (tokens != null) {
             for (String token : tokens) {
                 //构造token对象
@@ -73,7 +69,7 @@ public class RedisTokensServiceImpl implements ITokensService {
                     tokenVo.setClientId(authorization.getRegisteredClientId());
                     tokenVo.setGrantType(authorization.getAuthorizationGrantType().getValue());
 
-                    String accountType = (String)authorization.getAttributes().get(SecurityConstants.ACCOUNT_TYPE_PARAM_NAME);
+                    String accountType = (String) authorization.getAttributes().get(SecurityConstants.ACCOUNT_TYPE_PARAM_NAME);
                     tokenVo.setAccountType(accountType);
                 }
                 result.add(tokenVo);

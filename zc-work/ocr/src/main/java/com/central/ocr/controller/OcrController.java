@@ -1,7 +1,8 @@
-package com.ocr.controller;
+package com.central.ocr.controller;
 
 import com.central.common.model.Result;
-import com.ocr.service.IOcrService;
+import com.central.ocr.service.IOcrService;
+import com.central.ocr.vo.OcrAnalysisDataVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,7 @@ public class OcrController {
 
     @GetMapping
     @Operation(summary = "根据图片url获取图片信息")
-    public Result<String> loadByImgUrl(String imgUrl) throws ExecutionException, InterruptedException {
+    public Result<OcrAnalysisDataVo> loadByImgUrl(String imgUrl) throws ExecutionException, InterruptedException {
         return Result.succeed(ocrService.loadByImgUrl(imgUrl));
     }
 }

@@ -34,6 +34,10 @@ public class S3Properties {
      */
     private String bucketName;
     /**
+     * 过期时间   秒
+     */
+    private Integer expires;
+    /**
      * 区域
      */
     private String region;

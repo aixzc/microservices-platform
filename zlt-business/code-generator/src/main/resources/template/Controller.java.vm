@@ -48,7 +48,7 @@ public class ${className}Controller {
      */
     @Operation(summary = "查询")
     @GetMapping("/{${pk.attrname}}")
-    public Result findUserById(@PathVariable Long ${pk.attrname}) {
+    public Result findById(@PathVariable Long ${pk.attrname}) {
         ${className} model = ${classname}Service.getById(${pk.attrname});
         return Result.succeed(model, "查询成功");
     }

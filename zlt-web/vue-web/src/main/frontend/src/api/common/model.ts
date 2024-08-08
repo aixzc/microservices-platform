@@ -18,5 +18,8 @@ export default {
     },
     'file': {
         name: 'api-file/'
+    },
+    'ocr': {
+        name: 'api-ocr/'
     }
 };

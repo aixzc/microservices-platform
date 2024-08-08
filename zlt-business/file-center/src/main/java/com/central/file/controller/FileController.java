@@ -1,18 +1,16 @@
 package com.central.file.controller;
 
-import java.util.Map;
-
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.central.common.model.PageResult;
 import com.central.common.model.Result;
+import com.central.file.model.FileInfo;
 import com.central.file.service.IFileService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.central.common.model.PageResult;
-import com.central.file.model.FileInfo;
-
 import javax.annotation.Resource;
+import java.util.Map;
 
 /**
  * 文件上传
@@ -55,6 +53,20 @@ public class FileController {
     /**
      * 文件查询
      *
+     * @param id
+     */
+    @GetMapping("/files/{id}")
+    public Result getById(@PathVariable String id) {
+        try {
+            return Result.succeed(fileService.getById(id), "查询成功");
+        } catch (Exception ex) {
+            return Result.failed("查询失败");
+        }
+    }
+
+    /**
+     * 文件查询
+     *
      * @param params
      * @return
      */
@@ -70,8 +82,9 @@ public class FileController {
      * @return
      */
     @PostMapping("/url")
-    public void viewUrl(@RequestBody String json) {
+    public String viewUrl(@RequestBody String json) {
         String path = fileService.getUrl(null, JSONObject.parseObject(json).getString("path"));
         assert StrUtil.isNotBlank(path);
+        return path;
     }
 }

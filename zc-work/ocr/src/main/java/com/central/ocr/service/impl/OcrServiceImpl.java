@@ -1,19 +1,21 @@
-package com.ocr.service.impl;
+package com.central.ocr.service.impl;
 
+import cn.hutool.core.lang.Assert;
+import com.alibaba.fastjson.JSON;
 import com.aliyun.auth.credentials.Credential;
 import com.aliyun.auth.credentials.provider.StaticCredentialProvider;
 import com.aliyun.sdk.service.ocr_api20210707.AsyncClient;
-import com.aliyun.sdk.service.ocr_api20210707.models.RecognizeHandwritingRequest;
-import com.aliyun.sdk.service.ocr_api20210707.models.RecognizeHandwritingResponse;
-import com.google.gson.Gson;
-import com.ocr.properties.OcrProperties;
-import com.ocr.service.IOcrService;
+import com.aliyun.sdk.service.ocr_api20210707.models.RecognizeAdvancedRequest;
+import com.aliyun.sdk.service.ocr_api20210707.models.RecognizeAdvancedResponse;
+import com.central.ocr.properties.OcrProperties;
+import com.central.ocr.service.IOcrService;
+import com.central.ocr.vo.OcrAnalysisDataVo;
 import darabonba.core.client.ClientOverrideConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -21,7 +23,7 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class OcrServiceImpl implements IOcrService, InitializingBean {
 
-    @Resource
+    @Autowired
     private OcrProperties ocrProperties;
 
     private AsyncClient client;
@@ -41,15 +43,14 @@ public class OcrServiceImpl implements IOcrService, InitializingBean {
     }
 
     @Override
-    public String loadByImgUrl(String imgUrl) throws ExecutionException, InterruptedException {
-
-        RecognizeHandwritingRequest recognizeHandwritingRequest = RecognizeHandwritingRequest.builder().url(imgUrl).needRotate(false)
+    public OcrAnalysisDataVo loadByImgUrl(String imgUrl) throws ExecutionException, InterruptedException {
+        RecognizeAdvancedRequest recognizeAdvancedRequest = RecognizeAdvancedRequest.builder()
+                .url(imgUrl)
                 .build();
-        CompletableFuture<RecognizeHandwritingResponse> response = client.recognizeHandwriting(recognizeHandwritingRequest);
-        RecognizeHandwritingResponse resp = response.get();
-        System.out.println(new Gson().toJson(resp));
-        client.close();
-        return new Gson().toJson(resp);
+        CompletableFuture<RecognizeAdvancedResponse> response = client.recognizeAdvanced(recognizeAdvancedRequest);
+        RecognizeAdvancedResponse resp = response.get();
+        Assert.state(!resp.getStatusCode().equals("200"), "ocr识别失败");
+        return JSON.toJavaObject(JSON.parseObject(resp.getBody().getData()), OcrAnalysisDataVo.class);
     }
 
 }

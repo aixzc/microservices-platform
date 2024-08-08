@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
+import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.central.common.datascope.mp.interceptor.DataScopeInnerInterceptor;
 import com.central.common.datascope.mp.interceptor.EnableQuerySqlLogInnerInterceptor;
@@ -44,7 +45,7 @@ public class MybatisPlusAutoConfigure {
 
     @Bean
     @ConditionalOnMissingBean
-    public SqlHandler sqlHandler(){
+    public SqlHandler sqlHandler() {
         return new CreatorDataScopeSqlHandler();
     }
 
@@ -61,10 +62,10 @@ public class MybatisPlusAutoConfigure {
                     tenantLineHandler, tenantProperties.getIgnoreSqls());
             mpInterceptor.addInnerInterceptor(tenantInterceptor);
         }
-        if(dataScopeProperties.getEnabled()){
+        if (dataScopeProperties.getEnabled()) {
             DataScopeInnerInterceptor dataScopeInnerInterceptor = new DataScopeInnerInterceptor(dataScopeProperties, sqlHandler);
             mpInterceptor.addInnerInterceptor(Boolean.TRUE.equals(dataScopeProperties.getEnabledSqlDebug())
-                    ? new EnableQuerySqlLogInnerInterceptor(dataScopeInnerInterceptor): dataScopeInnerInterceptor);
+                    ? new EnableQuerySqlLogInnerInterceptor(dataScopeInnerInterceptor) : dataScopeInnerInterceptor);
         }
         mpInterceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         return mpInterceptor;
@@ -75,5 +76,21 @@ public class MybatisPlusAutoConfigure {
     @ConditionalOnProperty(prefix = "zlt.mybatis-plus.auto-fill", name = "enabled", havingValue = "true", matchIfMissing = true)
     public MetaObjectHandler metaObjectHandler() {
         return new DateMetaObjectHandler(autoFillProperties);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(prefix = "zlt.mybatis-plus.auto-fill", name = "enabled", havingValue = "true", matchIfMissing = true)
+    public MetaObjectHandler userMetaObjectHandler() {
+        return new UserMetaObjectHandler(autoFillProperties);
+    }
+
+
+    @Bean
+    @ConditionalOnMissingBean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(new BlockAttackInnerInterceptor());
+        return interceptor;
     }
 }

@@ -2,6 +2,8 @@ package com.central.file.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.central.common.constant.CommonConstant;
+import com.central.common.redis.constant.RedisKeyBucket;
+import com.central.common.redis.template.RedisRepository;
 import com.central.file.model.FileInfo;
 import com.central.oss.model.ObjectInfo;
 import com.central.oss.properties.FileServerProperties;
@@ -27,6 +29,9 @@ import java.io.OutputStream;
 public class S3Service extends AbstractIFileService {
     @Resource
     private S3Template s3Template;
+
+    @Resource
+    private RedisRepository redisRepository;
 
     @Override
     protected String fileType() {
@@ -67,7 +72,15 @@ public class S3Service extends AbstractIFileService {
             }
         }
         assert s3Object != null;
-        url = s3Template.getViewUrl(s3Object.bucketName, s3Object.objectName, 60);
+        String redisKey = RedisKeyBucket.FILE_PREVIEW + s3Object.bucketName + CommonConstant.PATH_SPLIT + s3Object.objectName;
+        if (redisRepository.exists(redisKey)) {
+            url = (String) redisRepository.get(redisKey);
+        } else {
+            //过期时间  秒
+            Integer expires = s3Template.getFileProperties().getS3().getExpires();
+            url = s3Template.getViewUrl(s3Object.bucketName, s3Object.objectName, expires / 60);
+            redisRepository.setExpire(redisKey, url, expires - 60);
+        }
         return url;
     }
 
